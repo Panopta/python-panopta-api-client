@@ -38,7 +38,7 @@ class api_client:
             'Authorization': 'ApiKey %s' % self.api_token,
             'Content-Type': 'application/json',
             'Accept': 'application/json'
-        } 
+        }
 
     def _setup_logging(self):
         self.logger = logging.getLogger('Panopta API')
@@ -65,12 +65,13 @@ class api_client:
 
         #-- Send request
 
-        self.logger.info('%s %s' % (method, resource_path))  
+        self.logger.info('%s %s' % (method, resource_path))
 
         try:
-            resp, content = Http().request(uri=resource_path, method=method, body=data, headers=headers)
+            client = Http(disable_ssl_certificate_validation=True)
+            resp, content = client.request(uri=resource_path, method=method, body=data, headers=headers)
         except Exception, err:
-            self.logger.error(str(err))  
+            self.logger.error(str(err))
             return self._get_response("0", str(err), None, None)
 
         try: content = json.loads(content)
@@ -98,13 +99,13 @@ class api_client:
             status_reason = 'success'
         else:
             reason = resp.get('errormessage', None)
-            if reason: 
+            if reason:
                 status_reason = 'error: %s' % reason
             else:
-                status_reason = 'error' 
+                status_reason = 'error'
 
         return self._get_response(status_code, status_reason, content, resp)
-       
+
     def get(self, resource_uri, query_params={}, headers={}):
         return self._request("%s?%s" % (resource_uri, urlencode(query_params)), "GET", None, headers)
 
