@@ -1,24 +1,28 @@
 import api_client
 import json
+import unittest
 
-api_url = 'http://api2.panopta.com'
-api_token = 'testing'
-version = '2'
 
-if __name__ == '__main__':
-    #-- initialize the client
-    client = api_client.api_client(api_url, 
-                                   api_token,
-                                   version=version,
-                                   log_level=api_client.LOG_DEBUG,
-                                   log_path='./')
+class APIClientTest(unittest.TestCase):
+    api_url = 'https://api2.panopta-testing.com'
+    api_token = '7cee6cce-f3e7-412c-b219-20a623'
+    version = '2'
 
-    #-- get a server
-    query_params = { 'fqdn': 'panopta.com', 'limit': 10, 'offset': 0 }
-    results = client.get('/server', query_params=query_params)
-    print json.dumps(results, indent=2) 
+    def setUp(self):
+        self.client = api_client.api_client(
+            self.api_url,
+            self.api_token,
+            version=self.version,
+            log_level=api_client.LOG_DEBUG,
+            log_path='./'
+        )
 
-    #-- create a contact
-    data = { 'name': 'john', 'timezone': '%s/v%s/timezone/America/Chicago' % (api_url, version) } 
-    results = client.post('/contact', request_data=data)
-    print json.dumps(results, indent=2)
+    def test_getting_a_server(self):
+        query_params = {'fqdn': 'panopta.com', 'limit': 10, 'offset': 0}
+        results = self.client.get('/server', query_params=query_params)
+        self.assertEqual(results['status_code'], '200')
+
+    def test_creating_a_client(self):
+        data = {'name': 'john', 'timezone': '%s/v%s/timezone/America/Chicago' % (self.api_url, self.version)}
+        results = self.client.post('/contact', request_data=data)
+        self.assertEqual(results['status_code'], '201')
