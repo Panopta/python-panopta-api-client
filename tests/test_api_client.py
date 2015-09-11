@@ -14,7 +14,7 @@ class APIClientTest(unittest.TestCase):
             self.api_token,
             version=self.version,
             log_level=Client.LOG_DEBUG,
-            log_path='./'
+            log_path='/tmp/'
         )
 
     def test_getting_a_server(self):
