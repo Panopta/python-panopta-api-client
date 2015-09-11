@@ -1,48 +1,41 @@
 from httplib2 import Http
-from urllib import urlencode
 from os.path import join
+from urllib import urlencode
+from urlparse import urljoin
 import json
-import socket
 import logging
 import logging.handlers
+import socket
 
 
 class Client:
     LOG_INFO = logging.INFO
     LOG_DEBUG = logging.DEBUG
 
-    def __init__(self, api_base_url,
-                       api_token,
-                       version="2",
-                       log_level=LOG_INFO,
-                       log_path="."):
+    def __init__(self,
+                 token,
+                 host='https://api2.panopta.com/',
+                 version=2,
+                 log_level=LOG_INFO,
+                 log_path="."):
 
-        self.api_base_url = api_base_url
-        self.api_token = api_token
+        self.token = token
+        self.base_url = urljoin(host, 'v' + str(version))
         self.version = version
         self.log_level = log_level
         self.log_path = log_path
-
-        self._setup()
-
-    def _setup(self):
-        self._setup_api()
-        self._setup_logging()
-
-    def _setup_api(self):
-        self.api_base = "%s/v%s" % (self.api_base_url.strip("/"), self.version)
         self.headers = {
-            'Authorization': 'ApiKey %s' % self.api_token,
+            'Authorization': 'ApiKey %s' % self.token,
             'Content-Type': 'application/json',
             'Accept': 'application/json'
         }
-
-    def _setup_logging(self):
         self.logger = logging.getLogger('Panopta API')
-
-        logHandler = logging.handlers.TimedRotatingFileHandler(join(self.log_path, "panopta_api.log"), when='d', interval=1, backupCount=14)
-        logHandler.setFormatter(logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s'))
-        self.logger.addHandler(logHandler)
+        log_handler = logging.handlers.TimedRotatingFileHandler(join(self.log_path, "panopta_api.log"),
+                                                                when='d',
+                                                                interval=1,
+                                                                backupCount=14)
+        log_handler.setFormatter(logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s'))
+        self.logger.addHandler(log_handler)
         self.logger.setLevel(self.log_level)
 
     def _get_response(self, status_code, status_reason, content, headers):
@@ -57,7 +50,7 @@ class Client:
         }
 
     def _request(self, resource_uri, method, data, headers):
-        resource_path = ("%s/%s" % (self.api_base, resource_uri.strip("/"))).strip("?")
+        resource_path = ("%s/%s" % (self.base_url, resource_uri.strip("/"))).strip("?")
         headers.update(self.headers)
 
         #-- Send request

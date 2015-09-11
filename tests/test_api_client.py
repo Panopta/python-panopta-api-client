@@ -1,18 +1,13 @@
 from panopta_api import Client
+from urlparse import urljoin
 import json
 import unittest
 
 
 class APIClientTest(unittest.TestCase):
-    api_url = 'https://api2.panopta-testing.com'
-    api_token = '7cee6cce-f3e7-412c-b219-20a623'
-    version = '2'
-
     def setUp(self):
         self.client = Client(
-            self.api_url,
-            self.api_token,
-            version=self.version,
+            'fake-api-key',
             log_level=Client.LOG_DEBUG,
             log_path='/tmp/'
         )
@@ -23,6 +18,6 @@ class APIClientTest(unittest.TestCase):
         self.assertEqual(results['status_code'], '200')
 
     def test_creating_a_client(self):
-        data = {'name': 'john', 'timezone': '%s/v%s/timezone/America/Chicago' % (self.api_url, self.version)}
+        data = {'name': 'john', 'timezone': urljoin(self.client.base_url, 'America/Chicago')}
         results = self.client.post('/contact', request_data=data)
         self.assertEqual(results['status_code'], '201')
