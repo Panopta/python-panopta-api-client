@@ -6,14 +6,11 @@ import socket
 import logging
 import logging.handlers
 
-#-- Global data
 
-LOG_INFO = logging.INFO
-LOG_DEBUG = logging.DEBUG
+class Client:
+    LOG_INFO = logging.INFO
+    LOG_DEBUG = logging.DEBUG
 
-#-- Api client
-
-class api_client:
     def __init__(self, api_base_url,
                        api_token,
                        version="2",

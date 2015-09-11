@@ -1,4 +1,4 @@
-import api_client
+from panopta_api import Client
 import json
 import unittest
 
@@ -9,11 +9,11 @@ class APIClientTest(unittest.TestCase):
     version = '2'
 
     def setUp(self):
-        self.client = api_client.api_client(
+        self.client = Client(
             self.api_url,
             self.api_token,
             version=self.version,
-            log_level=api_client.LOG_DEBUG,
+            log_level=Client.LOG_DEBUG,
             log_path='./'
         )
 
