@@ -1,4 +1,4 @@
-from setuptools import setup, find_packages
+from setuptools import setup
 
 setup(
     name='panopta_api',
@@ -10,5 +10,5 @@ setup(
     author_email='support@panopta.com',
     url='https://github.com/Panopta/python-panopta-api-client',
     packages=['panopta_api'],
-    install_requires=['httplib2'],
+    install_requires=['requests', 'requests-toolbelt'],
 )
