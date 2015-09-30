@@ -73,6 +73,6 @@ updated_server_group = client.put(
 ```
 
 ## DELETE
-```php
+```python
 client.delete(client.url('contact', '1'))
 ```
