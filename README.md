@@ -18,8 +18,8 @@ and issue API requests from the documentation page.
 pip install panopta_api
 ```
 
-# Usage 
-The library provides a wrapper around the Panopta API, making it easy to issue 
+# Usage
+The library provides a wrapper around the Panopta API, making it easy to issue
 GET, POST, PUT and DELETE operations to the API. The `Client` is an adapter
 built on top of [Requests](http://python-requests.org), so anything you can do
 with a `requests.Session`, you can with `panopta_api.Client`.
@@ -29,7 +29,7 @@ with a `requests.Session`, you can with `panopta_api.Client`.
 from panopta_api import Client
 client = Client('your-api-key',
                 host='http://api2.panopta.com',
-                version='2', 
+                version='2',
                 log_level=Client.LOG_INFO,
                 log_path='logs/')
 ```

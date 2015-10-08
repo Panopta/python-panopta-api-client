@@ -1,9 +1,9 @@
+from . import __version__
 from os.path import join
+from requests_toolbelt import user_agent
 from urlparse import urljoin
 import logging
 import logging.handlers
-from . import __version__
-from requests_toolbelt import user_agent
 import requests
 
 
