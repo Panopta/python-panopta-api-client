@@ -1,59 +1,78 @@
-==========================
 Panopta API Python Package
 ==========================
+The Panopta API provides full access to all configuration, status and outage
+management functionality of the Panopta monitoring service, including the
+ability to create and modify monitoring checks that are being performed, manage
+notification configuration, respond to active outages and to pull availability
+statistics for monitored servers. This package makes it simple to interact with
+the Panopta API.
 
-The Panopta REST API provides full access to all configuration, status and outage management
-functionality of the Panopta monitoring service, including the ability to create and modify
-monitoring checks that are being performed, manage notification configuration, respond
-to active outages and to pull availability statistics for monitored servers.
+# API Documentation
+Full documentation for the API is available at
+[https://api2.panopta.com/v2/api-docs/](https://api2.panopta.com/v2/api-docs/).
+By entering your API token you can view full details on all of the API methods
+and issue API requests from the documentation page.
 
-Installation
-============
+# Installation
+```bash
+pip install panopta_api
+```
 
-To install, just do a pip install of the package::
+# Usage
+The library provides a wrapper around the Panopta API, making it easy to issue
+GET, POST, PUT and DELETE operations to the API. The `Client` is an adapter
+built on top of [Requests](http://python-requests.org), so anything you can do
+with a `requests.Session`, you can with `panopta_api.Client`.
 
-  pip install panopta_rest_api
+## Instantiate the Panopta API client
+```python
+from panopta_api import Client
+client = Client('your-api-key',
+                host='http://api2.panopta.com',
+                version='2',
+                log_level=Client.LOG_INFO,
+                log_path='logs/')
+```
 
-The library depends on the httplib2 module, which will also be installed if it's not already
-available.
+## Generate API urls
+```python
+resource = 'server'
+id = '123'
+collection = 'network_service'
+server_network_services = client.url(resource, id, collection)
+```
 
-API Documentation
-=================
-Full documentation for the API is available at https://api2.panopta.com/v2/api-docs/.  By 
-entering your API token you can view full details on all of the API methods and issue API
-requests from the documentation page.
+## GET
+```python
+five_contacts = client.get(client.url('contact'), params={'limit': 5});
 
-Usage 
-=====
+servers_with_a_certain_fully_qualified_domain_name = client.get(
+    client.url('server'),
+    params={'fqdn': 'panopta.com'}
+)
 
-The library provides a wrapper around the Panopta REST API, making it easy to issue 
-GET, POST, PUT and DELETE operations to the API.  A sample use of the library is below.
+server_forty_two = client.get(client.url('server', '42'))
+```
 
-::
+## POST
+```python
+new_notification_schedule = client.post(
+    client.url('notification_schedule'),
+    json={'name': 'New Notification Schedule',
+          'targets': [server_forty_two['url']]}
+)
+```
 
-  import api_client
-  import json
-  
-  api_url = 'http://api2.panopta.com'
-  api_token = 'testing'
-  version = '2'
-  
-  if __name__ == '__main__':
-    #-- initialize the client
-    client = api_client.api_client(api_url, 
-                                   api_token, 
-                                   version=version, 
-                                   log_level=api_client.LOG_DEBUG, 
-                                   log_path='./')
-  
-    #-- get a server
-    query_params = { 'fqdn': 'panopta.com', 'limit': 10, 'offset': 0 }
-    results = client.get('/server', query_params=query_params)
-    print json.dumps(results, indent=2) 
-  
-    #-- create a contact
-    data = { 'name': 'john', 'timezone': '%s/v%s/timezone/America/Chicago' % (api_url, version) } 
-    results = client.post('/contact', request_data=data)
-    print json.dumps(results, indent=2)
+## PUT
+```python
+updated_server_group = client.put(
+    client.url('server_group'),
+    json={'name': 'Updated Server Group',
+          'notification_schedule': new_notification_schedule['url']}
+)
+```
 
-
+## DELETE
+```python
+client.delete(client.url('contact', '1'))
+```
